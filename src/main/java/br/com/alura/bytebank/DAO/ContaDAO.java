@@ -17,8 +17,8 @@ public class ContaDAO {
 
     private final Connection connection;
 
-    public ContaDAO(Connection connection) {
-        this.connection = connection;
+    public ContaDAO() {
+        this.connection = ConnectionFactoryDB.getConnection();
     }
 
     public void salvar(Cliente cliente, Conta conta){
