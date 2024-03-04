@@ -1,7 +1,7 @@
 package br.com.alura.bytebank.DAO;
 
-import br.com.alura.bytebank.DTOs.ContasDTO;
-import br.com.alura.bytebank.domain.RegraDeNegocioException;
+import br.com.alura.bytebank.DTOs.ContaDTO;
+import br.com.alura.bytebank.data.ConnectionFactoryDB;
 import br.com.alura.bytebank.domain.cliente.Cliente;
 import br.com.alura.bytebank.domain.conta.Conta;
 
@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class ContaDAO {
@@ -49,7 +50,7 @@ public class ContaDAO {
             preparedStatement.executeUpdate();
         }
         catch (SQLException e){
-            throw new RuntimeException(e);
+            throw new RuntimeException("Não foi possível efetuar o depósito", e);
         }
     }
 
@@ -83,7 +84,7 @@ public class ContaDAO {
     public String listarContas(){
         String sql = "SELECT * FROM conta";
 
-        Set<ContasDTO> contas = new HashSet<>();
+        Set<ContaDTO> contas = new HashSet<>();
 
         try (var preparedStatement = connection.prepareStatement(sql)){
             preencherContaDTO(contas, preparedStatement);
@@ -94,10 +95,10 @@ public class ContaDAO {
         return contas.toString();
     }
 
-    public Conta buscarPorNumero(Integer num){
+    public Optional<ContaDTO> recuperarPorNumero(Integer num){
         String sql = "SELECT * FROM conta WHERE numero = ?";
 
-        Set<ContasDTO> contas = new HashSet<>();
+        Set<ContaDTO> contas = new HashSet<>();
 
         try (var preparedStatement = connection.prepareStatement(sql)){
             preparedStatement.setInt(1, num);
@@ -107,17 +108,14 @@ public class ContaDAO {
         catch (SQLException e){
             throw new RuntimeException(e);
         }
-        return contas.stream().findFirst().map(contaDTO -> new Conta(
-                contaDTO.getNumero(),
-                new Cliente(
-                        contaDTO.getCliente_nome(),
-                        contaDTO.getCliente_cpf(),
-                        contaDTO.getCliente_email()
-                )
-        )).orElseThrow(() -> new RegraDeNegocioException("A conta não foi encontrada"));
+        return contas.stream().findFirst();
     }
 
-    private void preencherContaDTO(Set<ContasDTO> contas, PreparedStatement preparedStatement) throws SQLException {
+    /**
+     * Método para criar e preencher um objeto ContaDTO
+     * para fins de retorno de informação sobre a conta
+     */
+    private void preencherContaDTO(Set<ContaDTO> contas, PreparedStatement preparedStatement) throws SQLException {
         try (ResultSet resultSet  = preparedStatement.executeQuery()){
             while (resultSet.next()){
                 Integer numero = resultSet.getInt(1);
@@ -126,7 +124,8 @@ public class ContaDAO {
                 String cpf = resultSet.getString(4);
                 String email = resultSet.getString(5);
 
-                contas.add(new ContasDTO(numero, saldo, nome, cpf, email));
+                contas.add(new ContaDTO(numero, saldo, nome, cpf, email)
+                );
             }
         }
     }
