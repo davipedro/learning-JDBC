@@ -1,6 +1,5 @@
 package br.com.alura.bytebank.domain.cliente;
 
-import java.time.LocalDate;
 import java.util.Objects;
 
 public class Cliente {
@@ -13,6 +12,12 @@ public class Cliente {
         this.nome = dados.nome();
         this.cpf = dados.cpf();
         this.email = dados.email();
+    }
+
+    public Cliente(String nome, String cpf, String email) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.email = email;
     }
 
     @Override
