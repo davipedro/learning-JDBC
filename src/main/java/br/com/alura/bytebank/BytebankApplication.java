@@ -2,6 +2,7 @@ package br.com.alura.bytebank;
 
 import br.com.alura.bytebank.domain.RegraDeNegocioException;
 import br.com.alura.bytebank.domain.cliente.DadosCadastroCliente;
+import br.com.alura.bytebank.domain.conta.Conta;
 import br.com.alura.bytebank.domain.conta.ContaService;
 import br.com.alura.bytebank.domain.conta.DadosAberturaConta;
 
@@ -14,7 +15,7 @@ public class BytebankApplication {
 
     public static void main(String[] args) {
         var opcao = exibirMenu();
-        while (opcao != 7) {
+        while (opcao != 8) {
             try {
                 switch (opcao) {
                     case 1:
@@ -34,6 +35,9 @@ public class BytebankApplication {
                         break;
                     case 6:
                         realizarDeposito();
+                        break;
+                    case 7:
+                        buscarPorNumero();
                         break;
                 }
             } catch (RegraDeNegocioException e) {
@@ -56,18 +60,25 @@ public class BytebankApplication {
                 4 - Consultar saldo de uma conta
                 5 - Realizar saque em uma conta
                 6 - Realizar depósito em uma conta
-                7 - Sair
+                7 - Buscar por Numero;
+                8 - Sair
                 """);
         return teclado.nextInt();
     }
 
     private static void listarContas() {
         System.out.println("Contas cadastradas:");
-        var contas = service.listarContasAbertas();
-        contas.stream().forEach(System.out::println);
+        System.out.println(service.listarContasAbertas());
 
         System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu principal");
         teclado.next();
+    }
+
+    private static void buscarPorNumero(){
+        System.out.println("Digite o número da conta:");
+        Integer numero = teclado.nextInt();
+        Conta conta = service.buscarContaPorNumero(numero);
+        System.out.println(conta);
     }
 
     private static void abrirConta() {
