@@ -2,14 +2,14 @@ package br.com.alura.bytebank.DTOs;
 
 import java.math.BigDecimal;
 
-public class ContasDTO{
+public class ContaDTO {
     private Integer numero;
     private BigDecimal saldo;
     private String cliente_nome;
     private String cliente_cpf;
     private String cliente_email;
 
-    public ContasDTO(Integer numero, BigDecimal saldo, String cliente_nome, String cliente_cpf, String cliente_email) {
+    public ContaDTO(Integer numero, BigDecimal saldo, String cliente_nome, String cliente_cpf, String cliente_email) {
         this.numero = numero;
         this.saldo = saldo;
         this.cliente_nome = cliente_nome;
