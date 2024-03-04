@@ -1,17 +1,17 @@
 package br.com.alura.bytebank;
 
-import br.com.alura.bytebank.domain.RegraDeNegocioException;
+import br.com.alura.bytebank.DTOs.ContaDTO;
+import br.com.alura.bytebank.validacao.excessoes.RegraDeNegocioException;
 import br.com.alura.bytebank.domain.cliente.DadosCadastroCliente;
-import br.com.alura.bytebank.domain.conta.Conta;
 import br.com.alura.bytebank.domain.conta.ContaService;
-import br.com.alura.bytebank.domain.conta.DadosAberturaConta;
+import br.com.alura.bytebank.domain.conta.AberturaContaDTO;
 
 import java.util.Scanner;
 
 public class BytebankApplication {
 
-    private static ContaService service = new ContaService();
-    private static Scanner teclado = new Scanner(System.in).useDelimiter("\n");
+    private static final ContaService service = new ContaService();
+    private static final Scanner teclado = new Scanner(System.in).useDelimiter("\n");
 
     public static void main(String[] args) {
         var opcao = exibirMenu();
@@ -77,7 +77,7 @@ public class BytebankApplication {
     private static void buscarPorNumero(){
         System.out.println("Digite o número da conta:");
         Integer numero = teclado.nextInt();
-        Conta conta = service.buscarContaPorNumero(numero);
+        ContaDTO conta = service.buscarContaPorNumero(numero);
         System.out.println(conta);
     }
 
@@ -94,7 +94,7 @@ public class BytebankApplication {
         System.out.println("Digite o email do cliente:");
         var email = teclado.next();
 
-        service.abrir(new DadosAberturaConta(numeroDaConta, new DadosCadastroCliente(nome, cpf, email)));
+        service.abrir(new AberturaContaDTO(numeroDaConta, new DadosCadastroCliente(nome, cpf, email)));
 
         System.out.println("Conta aberta com sucesso!");
         System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu principal");
@@ -130,7 +130,8 @@ public class BytebankApplication {
         var valor = teclado.nextBigDecimal();
 
         service.realizarSaque(numeroDaConta, valor);
-        System.out.println("Saque realizado com sucesso!");
+        System.out.printf("Saque de %s realizado com sucesso!", valor);
+        System.out.println();
         System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu principal");
         teclado.next();
     }
