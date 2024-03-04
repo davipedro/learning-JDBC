@@ -24,10 +24,9 @@ public class ContaService {
         contaDAO = new ContaDAO(connection);
     }
 
-    public Set<Conta> listarContasAbertas() {
-        return contas;
+    public String listarContasAbertas() {
+        return contaDAO.listarContas();
     }
-
 
     public BigDecimal consultarSaldo(Integer numeroDaConta) {
         var conta = buscarContaPorNumero(numeroDaConta);
@@ -75,11 +74,7 @@ public class ContaService {
         contas.remove(conta);
     }
 
-    private Conta buscarContaPorNumero(Integer numero) {
-        return contas
-                .stream()
-                .filter(c -> c.getNumero() == numero)
-                .findFirst()
-                .orElseThrow(() -> new RegraDeNegocioException("Não existe conta cadastrada com esse número!"));
+    public Conta buscarContaPorNumero(Integer numero) {
+        return contaDAO.buscarPorNumero(numero);
     }
 }
