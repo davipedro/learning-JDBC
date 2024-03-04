@@ -35,7 +35,48 @@ public class ContaDAO {
             preparedStatement.execute();
         }
         catch (SQLException e){
+            throw new RuntimeException("Não foi possível salvar a conta", e);
+        }
+    }
+
+    public void salvarDeposito(Integer numeroDaConta ,BigDecimal valorDeposito){
+        String sql = "UPDATE conta SET saldo = saldo + ? WHERE numero = ?";
+
+        try (var preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setBigDecimal(1,valorDeposito);
+            preparedStatement.setInt(2,numeroDaConta);
+
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException e){
             throw new RuntimeException(e);
+        }
+    }
+
+    public void salvarSaque(Integer numeroDaConta ,BigDecimal valorSaque){
+        String sql = "UPDATE conta SET saldo = saldo - ? WHERE numero = ?";
+
+        try (var preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setBigDecimal(1,valorSaque);
+            preparedStatement.setInt(2,numeroDaConta);
+
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException e){
+            throw new RuntimeException("Não foi possível efetuar o saque", e);
+        }
+    }
+
+    public void deletarConta(Integer numeroDaConta){
+        String sql = "DELETE FROM conta WHERE numero = ?";
+
+        try (var preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setInt(1,numeroDaConta);
+
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException e){
+            throw new RuntimeException("Não foi possível deletar a conta", e);
         }
     }
 
