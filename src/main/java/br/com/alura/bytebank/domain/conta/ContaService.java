@@ -1,27 +1,18 @@
 package br.com.alura.bytebank.domain.conta;
 
 import br.com.alura.bytebank.DAO.ContaDAO;
-import br.com.alura.bytebank.data.ConnectionFactoryDB;
-import br.com.alura.bytebank.domain.RegraDeNegocioException;
+import br.com.alura.bytebank.DTOs.ContaDTO;
 import br.com.alura.bytebank.domain.cliente.Cliente;
+import br.com.alura.bytebank.validacao.excessoes.RegraDeNegocioException;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ContaService {
 
-    private Connection connection;
-
-    private ContaDAO contaDAO;
-
-    private Set<Conta> contas = new HashSet<>();
+    private final ContaDAO contaDAO;
 
     public ContaService() {
-        var connectionFactory = new ConnectionFactoryDB();
-        connection = connectionFactory.getConnection();
-        contaDAO = new ContaDAO(connection);
+        contaDAO = new ContaDAO();
     }
 
     public String listarContasAbertas() {
