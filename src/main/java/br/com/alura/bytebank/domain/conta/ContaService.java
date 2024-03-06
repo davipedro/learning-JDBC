@@ -26,7 +26,7 @@ public class ContaService {
 
     public void abrir(AberturaContaDTO dadosDaConta) {
         var cliente = new Cliente(dadosDaConta.dadosCliente());
-        var conta = new Conta(dadosDaConta.numero(), cliente);
+        var conta = new Conta(dadosDaConta.numero(), cliente, true);
 
         boolean contaExiste = contaDAO.recuperarPorNumero(conta.getNumero()).isPresent();
 
@@ -47,14 +47,22 @@ public class ContaService {
             throw new RegraDeNegocioException("Saldo insuficiente!");
         }
 
+        if (!conta.isEstaAtiva()){
+            throw new RegraDeNegocioException("A conta está inativa");
+        }
+
         contaDAO.salvarSaque(numeroDaConta, valor);
     }
 
     public void realizarDeposito(Integer numeroDaConta, BigDecimal valor) {
-        buscarContaPorNumero(numeroDaConta);
+        ContaDTO conta = buscarContaPorNumero(numeroDaConta);
 
         if (valor.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RegraDeNegocioException("Valor do deposito deve ser superior a zero!");
+        }
+
+        if (!conta.isEstaAtiva()){
+            throw new RegraDeNegocioException("A conta está inativa");
         }
 
         contaDAO.salvarDeposito(numeroDaConta, valor);
