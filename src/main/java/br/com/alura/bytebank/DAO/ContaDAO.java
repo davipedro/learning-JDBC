@@ -23,8 +23,8 @@ public class ContaDAO {
     }
 
     public void salvar(Cliente cliente, Conta conta){
-        String sql = "INSERT INTO conta (numero, saldo, cliente_nome, cliente_cpf, cliente_email)" +
-                "VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO conta (numero, saldo, cliente_nome, cliente_cpf, cliente_email, esta_ativa)" +
+                "VALUES (?,?,?,?,?,?)";
 
         try(var preparedStatement = connection.prepareStatement(sql)){
             preparedStatement.setInt(1, conta.getNumero());
@@ -32,6 +32,7 @@ public class ContaDAO {
             preparedStatement.setString(3, cliente.getNome());
             preparedStatement.setString(4,cliente.getCpf());
             preparedStatement.setString(5, cliente.getEmail());
+            preparedStatement.setBoolean(6, conta.getEstaAtiva());
 
             preparedStatement.execute();
         }
@@ -98,8 +99,20 @@ public class ContaDAO {
         }
     }
 
+    public void alterarLogico(Integer numeroDaConta){
+        String sql = "UPDATE conta SET esta_ativa = false WHERE numero = ?";
+
+        try (var preparedStatement = connection.prepareStatement(sql)){
+            preparedStatement.setInt(1, numeroDaConta);
+            preparedStatement.execute();
+        }
+        catch (SQLException e){
+            throw new RuntimeException("Não foi possível deletar a conta", e);
+        }
+    }
+
     public String listarContas(){
-        String sql = "SELECT * FROM conta";
+        String sql = "SELECT * FROM conta WHERE esta_ativa = true";
 
         Set<ContaDTO> contas = new HashSet<>();
 
@@ -113,7 +126,7 @@ public class ContaDAO {
     }
 
     public Optional<ContaDTO> recuperarPorNumero(Integer num){
-        String sql = "SELECT * FROM conta WHERE numero = ?";
+        String sql = "SELECT * FROM conta WHERE numero = ? AND esta_ativa = true";
 
         Set<ContaDTO> contas = new HashSet<>();
 
@@ -140,8 +153,9 @@ public class ContaDAO {
                 String nome = resultSet.getString(3);
                 String cpf = resultSet.getString(4);
                 String email = resultSet.getString(5);
+                boolean estaAtiva = resultSet.getBoolean(6);
 
-                contas.add(new ContaDTO(numero, saldo, nome, cpf, email)
+                contas.add(new ContaDTO(numero, saldo, nome, cpf, email, estaAtiva)
                 );
             }
         }
