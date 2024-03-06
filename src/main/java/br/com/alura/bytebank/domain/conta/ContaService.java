@@ -68,6 +68,11 @@ public class ContaService {
         contaDAO.salvarDeposito(numeroDaConta, valor);
     }
 
+    public void realizarTransferencia(Integer numeroContaOrigem, Integer numeroContaDestino, BigDecimal valor){
+        realizarSaque(numeroContaOrigem, valor);
+        realizarDeposito(numeroContaDestino, valor);
+    }
+
     public void encerrar(Integer numeroDaConta) {
         ContaDTO conta = buscarContaPorNumero(numeroDaConta);
         boolean existeSaldo = conta.getSaldo().compareTo(BigDecimal.ZERO) != 0;
@@ -76,6 +81,16 @@ public class ContaService {
         }
 
         contaDAO.deletarConta(numeroDaConta);
+    }
+
+    public void encerrarLogico(Integer numeroDaConta){
+        ContaDTO conta = buscarContaPorNumero(numeroDaConta);
+        boolean existeSaldo = conta.getSaldo().compareTo(BigDecimal.ZERO) != 0;
+        if (existeSaldo) {
+            throw new RegraDeNegocioException("Conta não pode ser encerrada pois ainda possui saldo!");
+        }
+
+        contaDAO.alterarLogico(numeroDaConta);
     }
 
     public ContaDTO buscarContaPorNumero(Integer numero) {
