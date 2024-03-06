@@ -44,12 +44,21 @@ public class ContaDAO {
         String sql = "UPDATE conta SET saldo = saldo + ? WHERE numero = ?";
 
         try (var preparedStatement = connection.prepareStatement(sql)){
+            connection.setAutoCommit(false);
             preparedStatement.setBigDecimal(1,valorDeposito);
             preparedStatement.setInt(2,numeroDaConta);
 
             preparedStatement.executeUpdate();
+            connection.commit();
+            connection.setAutoCommit(true);
         }
         catch (SQLException e){
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+
             throw new RuntimeException("Não foi possível efetuar o depósito", e);
         }
     }
@@ -58,12 +67,20 @@ public class ContaDAO {
         String sql = "UPDATE conta SET saldo = saldo - ? WHERE numero = ?";
 
         try (var preparedStatement = connection.prepareStatement(sql)){
+            connection.setAutoCommit(false);
             preparedStatement.setBigDecimal(1,valorSaque);
             preparedStatement.setInt(2,numeroDaConta);
 
             preparedStatement.executeUpdate();
+            connection.commit();
+            connection.setAutoCommit(true);
         }
         catch (SQLException e){
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             throw new RuntimeException("Não foi possível efetuar o saque", e);
         }
     }
