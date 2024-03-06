@@ -8,13 +8,16 @@ public class ContaDTO {
     private String cliente_nome;
     private String cliente_cpf;
     private String cliente_email;
+    private boolean estaAtiva;
 
-    public ContaDTO(Integer numero, BigDecimal saldo, String cliente_nome, String cliente_cpf, String cliente_email) {
+    public ContaDTO(Integer numero, BigDecimal saldo, String cliente_nome,
+                    String cliente_cpf, String cliente_email, boolean estaAtiva) {
         this.numero = numero;
         this.saldo = saldo;
         this.cliente_nome = cliente_nome;
         this.cliente_cpf = cliente_cpf;
         this.cliente_email = cliente_email;
+        this.estaAtiva = estaAtiva;
     }
 
     public Integer getNumero() {
@@ -55,6 +58,14 @@ public class ContaDTO {
 
     public void setCliente_email(String cliente_email) {
         this.cliente_email = cliente_email;
+    }
+
+    public boolean isEstaAtiva() {
+        return estaAtiva;
+    }
+
+    public void setEstaAtiva(boolean estaAtiva) {
+        this.estaAtiva = estaAtiva;
     }
 
     @Override
